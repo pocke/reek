@@ -35,11 +35,14 @@ module Reek
       end
 
       def singleton_method?
+        # FIXME: Does it make sense for module_function to be a visibility? Is
+        # it mutually exclusive with :private, :public, :protected?
         exp.singleton_method? || visibility == :module_function
       end
 
       # @return [Boolean] If the visibility is public or not.
       def non_public_visibility?
+        # FIXME: Is module_function non-public?
         visibility != :public
       end
     end
