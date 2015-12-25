@@ -137,16 +137,20 @@ module Reek
     # :reek:FeatureEnvy
     def process_send(exp)
       method_name = exp.method_name
-      if exp.visibility_modifier?
-        element.track_visibility(method_name, exp.arg_names)
-      elsif exp.attribute_writer?
-        exp.args.each do |arg|
-          append_new_context(Context::AttributeContext, arg, exp)
+      # TODO: Provide generic hook method instead of type checking.
+      case element
+      when Context::ModuleContext
+        if exp.visibility_modifier?
+          element.track_visibility(method_name, exp.arg_names)
+        elsif exp.attribute_writer?
+          exp.args.each do |arg|
+            append_new_context(Context::AttributeContext, arg, exp)
+          end
         end
-      else
+      when Context::MethodContext
         append_new_context(Context::SendContext, exp, method_name)
+        element.record_call_to(exp)
       end
-      element.record_call_to(exp)
       process(exp)
     end
 
