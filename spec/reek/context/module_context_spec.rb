@@ -18,9 +18,7 @@ RSpec.describe Reek::Context::ModuleContext do
         # module for test
         class Jim; end; end').not_to reek
   end
-end
 
-RSpec.describe Reek::Context::ModuleContext do
   it 'should recognise global constant' do
     expect('
       # module for test
