@@ -20,8 +20,8 @@ module Reek
       extend Forwardable
       delegate each_node: :exp
       delegate %i(name type) => :exp
-      delegate %i(visibility visibility= non_public_visibility?) => :visibility_tracker
 
+      attr_accessor :visibility
       attr_reader :children, :context, :exp, :statement_counter, :visibility_tracker
       private_attr_reader :refs
 
@@ -66,6 +66,7 @@ module Reek
         @visibility_tracker = VisibilityTracker.new
         @statement_counter  = StatementCounter.new
         @refs               = AST::ObjectRefs.new
+        @visibility         = :public
       end
 
       # Iterate over each AST node (see `Reek::AST::Node`) of a given type for the current expression.
@@ -142,6 +143,11 @@ module Reek
       def config_for(detector_class)
         context_config_for(detector_class).merge(
           configuration_via_code_commment[detector_class.smell_type] || {})
+      end
+
+      # @return [Boolean] If the visibility is public or not.
+      def non_public_visibility?
+        visibility != :public
       end
 
       def track_visibility(visibility, names)

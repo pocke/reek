@@ -5,11 +5,10 @@ module Reek
     # Responsible for tracking visibilities in regards to CodeContexts.
     # :reek:Attribute
     class VisibilityTracker
-      attr_accessor :visibility
       private_attr_accessor :tracked_visibility
 
-      def initialize(visibility = :public)
-        @visibility = visibility
+      def initialize
+        @tracked_visibility = :public
       end
 
       # Handle the effects of a visibility modifier.
@@ -37,17 +36,6 @@ module Reek
       #
       def set_child_visibility(child)
         child.visibility = tracked_visibility
-      end
-
-      # @return [Boolean] If the visibility is public or not.
-      def non_public_visibility?
-        visibility != :public
-      end
-
-      private
-
-      def tracked_visibility
-        @tracked_visibility ||= :public
       end
     end
   end
