@@ -1,6 +1,5 @@
 require_relative '../code_comment'
 require_relative '../ast/object_refs'
-require_relative 'visibility_tracker'
 require_relative 'statement_counter'
 
 require 'forwardable'
@@ -22,7 +21,7 @@ module Reek
       delegate %i(name type) => :exp
 
       attr_accessor :visibility
-      attr_reader :children, :context, :exp, :statement_counter, :visibility_tracker
+      attr_reader :children, :context, :exp, :statement_counter
       private_attr_reader :refs
 
       # Initializes a new CodeContext.
@@ -63,7 +62,6 @@ module Reek
         @context            = context
         @exp                = exp
         @children           = []
-        @visibility_tracker = VisibilityTracker.new
         @statement_counter  = StatementCounter.new
         @refs               = AST::ObjectRefs.new
         @visibility         = :public
@@ -99,12 +97,8 @@ module Reek
       # Register a child context. The child's parent context should be equal to
       # the current context.
       #
-      # This makes the current context responsible for setting the child's
-      # visibility.
-      #
       # @param child [CodeContext] the child context to register
       def append_child_context(child)
-        visibility_tracker.set_child_visibility(child)
         children << child
       end
 
@@ -143,12 +137,6 @@ module Reek
       def config_for(detector_class)
         context_config_for(detector_class).merge(
           configuration_via_code_commment[detector_class.smell_type] || {})
-      end
-
-      def track_visibility(visibility, names)
-        visibility_tracker.track_visibility children: children,
-                                            visibility: visibility,
-                                            names: names
       end
 
       def number_of_statements
