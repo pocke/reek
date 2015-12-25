@@ -37,6 +37,11 @@ module Reek
       def singleton_method?
         exp.singleton_method? || visibility == :module_function
       end
+
+      # @return [Boolean] If the visibility is public or not.
+      def non_public_visibility?
+        visibility != :public
+      end
     end
   end
 end

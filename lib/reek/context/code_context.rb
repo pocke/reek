@@ -145,11 +145,6 @@ module Reek
           configuration_via_code_commment[detector_class.smell_type] || {})
       end
 
-      # @return [Boolean] If the visibility is public or not.
-      def non_public_visibility?
-        visibility != :public
-      end
-
       def track_visibility(visibility, names)
         visibility_tracker.track_visibility children: children,
                                             visibility: visibility,
