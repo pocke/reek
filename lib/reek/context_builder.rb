@@ -137,7 +137,7 @@ module Reek
     # :reek:FeatureEnvy
     def process_send(exp)
       method_name = exp.method_name
-      # TODO: Provide generic hook method instead of type checking.
+      # FIXME: Provide generic hook method instead of type checking.
       case element
       when Context::ModuleContext
         if exp.visibility_modifier?
