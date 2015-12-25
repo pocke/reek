@@ -7,6 +7,8 @@ module Reek
     class VisibilityTracker
       private_attr_accessor :tracked_visibility
 
+      INSTANCE_METHOD_NODE_TYPES = [:sym, :def]
+
       def initialize
         @tracked_visibility = :public
       end
@@ -35,6 +37,7 @@ module Reek
       # @param child [CodeContext]
       #
       def set_child_visibility(child)
+        return unless INSTANCE_METHOD_NODE_TYPES.include? child.type
         child.visibility = tracked_visibility
       end
     end

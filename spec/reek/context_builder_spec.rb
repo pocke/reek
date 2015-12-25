@@ -218,4 +218,28 @@ RSpec.describe Reek::ContextBuilder do
       end
     end
   end
+
+  describe 'visibility tracking' do
+    def context_tree_for(code)
+      described_class.new(syntax_tree(code)).context_tree
+    end
+
+    it 'does not mark class methods with instance visibility' do
+      code = <<-EOS
+        class Foo
+          private
+          def bar
+          end
+          def self.baz
+          end
+        end
+      EOS
+
+      root = context_tree_for(code)
+      module_context = root.children.first
+      method_contexts = module_context.children
+      expect(method_contexts[0].visibility).to eq :private
+      expect(method_contexts[1].visibility).to eq :public
+    end
+  end
 end
