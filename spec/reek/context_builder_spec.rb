@@ -243,7 +243,7 @@ RSpec.describe Reek::ContextBuilder do
     end
   end
 
-  it "properly recognizes singleton methods correctly" do
+  it 'properly recognizes singleton methods correctly' do
     src = <<-EOS
       class Car
         def self.start; end

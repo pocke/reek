@@ -2,6 +2,10 @@ require_relative 'code_context'
 
 module Reek
   module Context
+    # Semi-transparent context to represent a metaclass while building the
+    # context tree. This context will not be part of the resulting tree, but
+    # will track context and visibility separately while building is in
+    # progress.
     class GhostContext
       attr_reader :children
       private_attr_reader :visibility_tracker
