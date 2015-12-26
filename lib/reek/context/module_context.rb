@@ -90,6 +90,14 @@ module Reek
       def singleton_method_children
         children.select(&:singleton_method?)
       end
+
+      def singleton_method?
+        false
+      end
+
+      def instance_method?
+        false
+      end
     end
   end
 end

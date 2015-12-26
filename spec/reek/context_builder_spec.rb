@@ -327,9 +327,34 @@ RSpec.describe Reek::ContextBuilder do
       method_contexts = module_context.children
       expect(method_contexts[0].visibility).to eq :public
     end
+
+    it 'correctly skips nested modules' do
+      code = <<-EOS
+        class Foo
+          class Bar
+            def baz
+            end
+          end
+
+          def baz
+          end
+
+          def self.bar
+          end
+
+          private :baz
+          private_class_method :bar
+        end
+      EOS
+
+      root = context_tree_for(code)
+      module_context = root.children.first
+      contexts = module_context.children
+      expect(contexts[0].visibility).to eq :public
+    end
   end
 
-  it 'properly recognizes singleton methods correctly' do
+  it 'properly recognizes singleton methods' do
     src = <<-EOS
       class Car
         def self.start; end
