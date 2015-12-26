@@ -9,6 +9,10 @@ module Reek
       def singleton_method?
         true
       end
+
+      def module_function?
+        false
+      end
     end
   end
 end

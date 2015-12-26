@@ -35,6 +35,10 @@ module Reek
       end
 
       def singleton_method?
+        false
+      end
+
+      def module_function?
         visibility == :module_function
       end
 

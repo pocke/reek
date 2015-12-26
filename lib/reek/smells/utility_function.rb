@@ -58,7 +58,7 @@ module Reek
       # :reek:FeatureEnvy
       # :reek:TooManyStatements: { max_statements: 6 }
       def inspect(ctx)
-        return [] if ctx.singleton_method?
+        return [] if ctx.singleton_method? || ctx.module_function?
         return [] if ctx.number_of_statements == 0
         return [] if ctx.references_self?
         return [] if num_helper_methods(ctx).zero?
