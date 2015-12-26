@@ -21,7 +21,9 @@ module Reek
       delegate %i(name type) => :exp
 
       attr_accessor :visibility
-      attr_reader :children, :context, :exp, :statement_counter
+      attr_reader :children, :context, :exp
+      attr_reader :statement_counter
+
       private_attr_reader :refs
 
       # Initializes a new CodeContext.
@@ -59,13 +61,13 @@ module Reek
       #     (send nil :puts
       #       (lvar :x)))
       def initialize(context, exp)
-        @context            = context
         @exp                = exp
         @children           = []
         @statement_counter  = StatementCounter.new
         @refs               = AST::ObjectRefs.new
         @visibility         = :public
-        context.append_child_context(self) if context
+
+        @context = context.append_child_context(self) if context
       end
 
       # Iterate over each AST node (see `Reek::AST::Node`) of a given type for the current expression.
@@ -143,6 +145,7 @@ module Reek
       # @param child [CodeContext] the child context to register
       def append_child_context(child)
         children << child
+        self
       end
 
       private
