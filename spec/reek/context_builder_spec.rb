@@ -242,4 +242,26 @@ RSpec.describe Reek::ContextBuilder do
       expect(method_contexts[1].visibility).to eq :public
     end
   end
+
+  it "properly recognizes singleton methods correctly" do
+    src = <<-EOS
+      class Car
+        def self.start; end
+
+        class << self
+          def drive; end
+        end
+      end
+    EOS
+
+    syntax_tree = Reek::Source::SourceCode.from(src).syntax_tree
+    context_tree = Reek::ContextBuilder.new(syntax_tree).context_tree
+
+    class_node = context_tree.children.first
+    start_method = class_node.children.first
+    drive_method = class_node.children.last
+
+    expect(start_method).to be_instance_of Reek::Context::SingletonMethodContext
+    expect(drive_method).to be_instance_of Reek::Context::SingletonMethodContext
+  end
 end
