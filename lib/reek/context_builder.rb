@@ -1,10 +1,11 @@
+require_relative 'context/attribute_context'
+require_relative 'context/class_context'
+require_relative 'context/ghost_context'
 require_relative 'context/method_context'
 require_relative 'context/module_context'
 require_relative 'context/root_context'
-require_relative 'context/singleton_method_context'
-require_relative 'context/attribute_context'
 require_relative 'context/send_context'
-require_relative 'context/class_context'
+require_relative 'context/singleton_method_context'
 require_relative 'ast/node'
 
 module Reek
@@ -79,6 +80,19 @@ module Reek
 
     alias_method :process_class, :process_module
 
+    # Handles `sclass` nodes
+    #
+    # An input example that would trigger this method would be:
+    #
+    #   class << self
+    #   end
+    #
+    def process_sclass(exp)
+      inside_new_context(Context::GhostContext, exp) do
+        process(exp)
+      end
+    end
+
     # Handles `casgn` ("class assign") nodes.
     #
     # An input example that would trigger this method would be:
@@ -139,7 +153,7 @@ module Reek
       method_name = exp.method_name
       # FIXME: Provide generic hook method instead of type checking.
       case current_context
-      when Context::ModuleContext
+      when Context::ModuleContext, Context::GhostContext
         if exp.visibility_modifier?
           current_context.track_visibility(method_name, exp.arg_names)
         elsif exp.attribute_writer?

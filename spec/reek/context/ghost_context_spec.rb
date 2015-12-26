@@ -8,28 +8,28 @@ RSpec.describe Reek::Context::GhostContext do
 
   describe '#initialize' do
     it 'does not append itself to its parent' do
-      ghost = described_class.new(parent)
+      ghost = described_class.new(parent, nil)
       expect(parent.children).not_to include ghost
     end
   end
 
   describe '#append_child_context' do
-    let(:ghost) { described_class.new(parent) }
+    let(:ghost) { described_class.new(parent, nil) }
 
     it 'appends the child to the grandparent context' do
-      child = Reek::Context::CodeContext.new(ghost, double('exp2'))
+      child = Reek::Context::CodeContext.new(ghost, sexp(:foo))
 
       expect(parent.children).to include child
     end
 
     it "sets the child's parent to the grandparent context" do
-      child = Reek::Context::CodeContext.new(ghost, double('exp2'))
+      child = Reek::Context::CodeContext.new(ghost, sexp(:foo))
 
       expect(child.context).to eq parent
     end
 
     it 'appends the child to the list of children' do
-      child = Reek::Context::CodeContext.new(ghost, double('exp2'))
+      child = Reek::Context::CodeContext.new(ghost, sexp(:foo))
 
       expect(ghost.children).to include child
     end
