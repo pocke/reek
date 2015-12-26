@@ -44,7 +44,6 @@ module Reek
 
       # @return [Boolean] If the visibility is public or not.
       def non_public_visibility?
-        # FIXME: Is module_function non-public?
         visibility != :public
       end
     end
