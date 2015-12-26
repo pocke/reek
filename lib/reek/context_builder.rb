@@ -5,6 +5,7 @@ require_relative 'context/method_context'
 require_relative 'context/module_context'
 require_relative 'context/root_context'
 require_relative 'context/send_context'
+require_relative 'context/singleton_attribute_context'
 require_relative 'context/singleton_method_context'
 require_relative 'ast/node'
 
@@ -116,6 +117,7 @@ module Reek
     # Given the above example we would count 2 statements overall.
     #
     def process_def(exp)
+      # FIXME: Do not use type checking
       klass = case current_context
               when Context::GhostContext
                 Context::SingletonMethodContext
@@ -161,10 +163,26 @@ module Reek
       case current_context
       when Context::ModuleContext, Context::GhostContext
         if exp.visibility_modifier?
+<<<<<<< 55fd311363001e8f35b8d9f9871cff65b25f6436
           current_context.track_visibility(method_name, exp.arg_names)
         elsif exp.attribute_writer?
+||||||| merged common ancestors
+          current_context.track_visibility(exp.method_name, exp.arg_names)
+        end
+        if exp.attribute_writer?
+=======
+          current_context.track_visibility(exp.method_name, exp.arg_names)
+        end
+        if exp.attribute_writer?
+          klass = case current_context
+                  when Context::GhostContext
+                    Context::SingletonAttributeContext
+                  else
+                    Context::AttributeContext
+                  end
+>>>>>>> Correctly modify only instance attributes
           exp.args.each do |arg|
-            append_new_context(Context::AttributeContext, arg, exp)
+            append_new_context(klass, arg, exp)
           end
         end
       when Context::MethodContext

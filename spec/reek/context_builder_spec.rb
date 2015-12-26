@@ -271,6 +271,62 @@ RSpec.describe Reek::ContextBuilder do
       expect(method_contexts[2].visibility).to eq :public
       expect(method_contexts[3].visibility).to eq :public
     end
+
+    it 'only marks existing instance attributes using later instance method modifiers' do
+      code = <<-EOS
+        class Foo
+          attr_writer :bar
+
+          class << self
+            attr_writer :bar
+          end
+
+          private :bar
+        end
+      EOS
+
+      root = context_tree_for(code)
+      module_context = root.children.first
+      method_contexts = module_context.children
+      expect(method_contexts[0].visibility).to eq :private
+      expect(method_contexts[1].visibility).to eq :public
+    end
+
+    it 'marks class method visibility using private_class_method' do
+      code = <<-EOS
+        class Foo
+          def self.baz
+          end
+
+          private_class_method :baz
+        end
+      EOS
+
+      root = context_tree_for(code)
+      module_context = root.children.first
+      method_contexts = module_context.children
+      expect(method_contexts[0].visibility).to eq :private
+    end
+
+    it 'marks class method visibility using public_class_method' do
+      code = <<-EOS
+        class Foo
+          class << self
+            private
+
+            def baz
+            end
+          end
+
+          public_class_method :baz
+        end
+      EOS
+
+      root = context_tree_for(code)
+      module_context = root.children.first
+      method_contexts = module_context.children
+      expect(method_contexts[0].visibility).to eq :public
+    end
   end
 
   it 'properly recognizes singleton methods correctly' do
