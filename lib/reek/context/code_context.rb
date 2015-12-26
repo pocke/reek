@@ -97,6 +97,14 @@ module Reek
 
       alias_method :parent, :context
 
+      # Register a child context. Used by a child context to register itself with its parent.
+      #
+      # @param child [CodeContext] the child context to register
+      def append_child_context(child)
+        children << child
+        self
+      end
+
       # :reek:TooManyStatements: { max_statements: 6 }
       # :reek:FeatureEnvy
       def record_call_to(exp)
@@ -136,16 +144,6 @@ module Reek
 
       def number_of_statements
         statement_counter.value
-      end
-
-      protected
-
-      # Register a child context. Used by a child context to register itself with its parent.
-      #
-      # @param child [CodeContext] the child context to register
-      def append_child_context(child)
-        children << child
-        self
       end
 
       private

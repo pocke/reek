@@ -16,7 +16,7 @@ RSpec.describe Reek::Context::GhostContext do
   describe '#append_child_context' do
     let(:ghost) { described_class.new(parent) }
 
-    it 'appends the child to its grandparent context' do
+    it 'appends the child to the grandparent context' do
       child = Reek::Context::CodeContext.new(ghost, double('exp2'))
 
       expect(parent.children).to include child
@@ -26,6 +26,12 @@ RSpec.describe Reek::Context::GhostContext do
       child = Reek::Context::CodeContext.new(ghost, double('exp2'))
 
       expect(child.context).to eq parent
+    end
+
+    it 'appends the child to the list of children' do
+      child = Reek::Context::CodeContext.new(ghost, double('exp2'))
+
+      expect(ghost.children).to include child
     end
   end
 end
