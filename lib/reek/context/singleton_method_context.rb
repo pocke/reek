@@ -6,6 +6,9 @@ module Reek
     # A context wrapper for any singleton method definition found in a syntax tree.
     #
     class SingletonMethodContext < MethodContext
+      def singleton_method?
+        true
+      end
     end
   end
 end
