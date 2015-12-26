@@ -354,25 +354,48 @@ RSpec.describe Reek::ContextBuilder do
     end
   end
 
-  it 'properly recognizes singleton methods' do
-    src = <<-EOS
-      class Car
-        def self.start; end
+  describe '#context_tree' do
+    it 'creates the proper context for all kinds of singleton methods' do
+      src = <<-EOS
+        class Car
+          def self.start; end
 
-        class << self
-          def drive; end
+          class << self
+            def drive; end
+          end
         end
-      end
-    EOS
+      EOS
 
-    syntax_tree = Reek::Source::SourceCode.from(src).syntax_tree
-    context_tree = Reek::ContextBuilder.new(syntax_tree).context_tree
+      syntax_tree = Reek::Source::SourceCode.from(src).syntax_tree
+      context_tree = Reek::ContextBuilder.new(syntax_tree).context_tree
 
-    class_node = context_tree.children.first
-    start_method = class_node.children.first
-    drive_method = class_node.children.last
+      class_node = context_tree.children.first
+      start_method = class_node.children.first
+      drive_method = class_node.children.last
 
-    expect(start_method).to be_instance_of Reek::Context::SingletonMethodContext
-    expect(drive_method).to be_instance_of Reek::Context::SingletonMethodContext
+      expect(start_method).to be_instance_of Reek::Context::SingletonMethodContext
+      expect(drive_method).to be_instance_of Reek::Context::SingletonMethodContext
+    end
+
+    it 'returns something sensible for nested metaclasses' do
+      src = <<-EOS
+        class Foo
+          class << self
+            class << self
+              def bar; end
+            end
+          end
+        end
+      EOS
+
+      syntax_tree = Reek::Source::SourceCode.from(src).syntax_tree
+      context_tree = Reek::ContextBuilder.new(syntax_tree).context_tree
+
+      class_context = context_tree.children.first
+      method_context = class_context.children.first
+
+      expect(method_context).to be_instance_of Reek::Context::SingletonMethodContext
+      expect(method_context.context).to eq class_context
+    end
   end
 end

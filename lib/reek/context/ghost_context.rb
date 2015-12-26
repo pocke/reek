@@ -18,9 +18,9 @@ module Reek
 
       def append_child_context(child)
         @children << child
-        @context.append_child_context(child)
+        real_parent = @context.append_child_context(child)
         visibility_tracker.set_child_visibility(child)
-        @context
+        real_parent
       end
 
       def track_visibility(visibility, names)

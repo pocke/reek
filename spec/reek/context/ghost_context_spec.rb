@@ -33,5 +33,15 @@ RSpec.describe Reek::Context::GhostContext do
 
       expect(ghost.children).to include child
     end
+
+    context 'if the grandparent is also a ghost' do
+      let(:child_ghost) { described_class.new(ghost, nil) }
+
+      it 'sets the childs parent to its remote ancestor' do
+        child = Reek::Context::CodeContext.new(child_ghost, sexp(:foo))
+
+        expect(child.context).to eq parent
+      end
+    end
   end
 end
