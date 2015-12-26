@@ -20,12 +20,12 @@ module Reek
   # :reek:UnusedPrivateMethod: { exclude: [ !ruby/regexp /process_/ ] }
   class ContextBuilder
     attr_reader :context_tree
-    private_attr_accessor :element
+    private_attr_accessor :current_context
     private_attr_reader :exp
 
     def initialize(syntax_tree)
       @exp = syntax_tree
-      @element = Context::RootContext.new(exp)
+      @current_context = Context::RootContext.new(exp)
       @context_tree = build(exp)
     end
 
@@ -60,7 +60,7 @@ module Reek
       else
         process exp
       end
-      element
+      current_context
     end
 
     # Handles every node for which we have no context_processor.
@@ -138,10 +138,10 @@ module Reek
     def process_send(exp)
       method_name = exp.method_name
       # FIXME: Provide generic hook method instead of type checking.
-      case element
+      case current_context
       when Context::ModuleContext
         if exp.visibility_modifier?
-          element.track_visibility(method_name, exp.arg_names)
+          current_context.track_visibility(method_name, exp.arg_names)
         elsif exp.attribute_writer?
           exp.args.each do |arg|
             append_new_context(Context::AttributeContext, arg, exp)
@@ -149,7 +149,7 @@ module Reek
         end
       when Context::MethodContext
         append_new_context(Context::SendContext, exp, method_name)
-        element.record_call_to(exp)
+        current_context.record_call_to(exp)
       end
       process(exp)
     end
@@ -167,7 +167,7 @@ module Reek
     # We record one reference to `x` given the example above.
     #
     def process_op_asgn(exp)
-      element.record_call_to(exp)
+      current_context.record_call_to(exp)
       process(exp)
     end
 
@@ -186,7 +186,7 @@ module Reek
     # We record one reference to `self`.
     #
     def process_ivar(exp)
-      element.record_use_of_self
+      current_context.record_use_of_self
       process(exp)
     end
 
@@ -199,7 +199,7 @@ module Reek
     #   def self.foo; end
     #
     def process_self(_)
-      element.record_use_of_self
+      current_context.record_use_of_self
     end
 
     # Handles `zsuper` nodes a.k.a. calls to `super` without any arguments but a block possibly.
@@ -219,7 +219,7 @@ module Reek
     # We record one reference to `self`.
     #
     def process_zsuper(_)
-      element.record_use_of_self
+      current_context.record_use_of_self
     end
 
     # Handles `block` nodes.
@@ -439,11 +439,11 @@ module Reek
 
     # :reek:ControlParameter
     def increase_statement_count_by(sexp)
-      element.statement_counter.increase_by sexp
+      current_context.statement_counter.increase_by sexp
     end
 
     def decrease_statement_count
-      element.statement_counter.decrease_by 1
+      current_context.statement_counter.decrease_by 1
     end
 
     # Stores a reference to the current context, creates a nested new one,
@@ -456,12 +456,13 @@ module Reek
     def inside_new_context(klass, exp)
       new_context = append_new_context(klass, exp)
 
-      orig, self.element = element, new_context
+      orig, self.current_context = current_context, new_context
       yield
-      self.element = orig
+      self.current_context = orig
     end
 
-    # Append a new child context to the current element.
+    # Append a new child context to the current context but does not change the
+    # current context.
     #
     # @param klass [Context::*Context] - context class
     # @param args - arguments for the class initializer
@@ -469,7 +470,7 @@ module Reek
     # @return [Context::*Context] - the context that was appended
     #
     def append_new_context(klass, *args)
-      klass.new(element, *args)
+      klass.new(current_context, *args)
     end
   end
 end
