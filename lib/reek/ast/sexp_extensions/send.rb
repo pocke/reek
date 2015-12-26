@@ -3,7 +3,9 @@ module Reek
     module SexpExtensions
       # Utility methods for :send nodes.
       module SendNode
+        # FIXME: Move to VisibilityTracker?
         VISIBILITY_MODIFIERS = [:private, :public, :protected, :module_function]
+        CLASS_VISIBILITY_MODIFIERS = [:private_class_method, :public_class_method]
         ATTR_DEFN_METHODS = [:attr_writer, :attr_accessor]
 
         def receiver
@@ -40,6 +42,10 @@ module Reek
 
         def visibility_modifier?
           VISIBILITY_MODIFIERS.include?(method_name)
+        end
+
+        def class_visibility_modifier?
+          CLASS_VISIBILITY_MODIFIERS.include?(method_name)
         end
 
         def attribute_writer?

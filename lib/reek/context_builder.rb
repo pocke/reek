@@ -173,6 +173,9 @@ module Reek
 =======
           current_context.track_visibility(exp.method_name, exp.arg_names)
         end
+        if exp.class_visibility_modifier?
+          current_context.track_singleton_visibility(exp.method_name, exp.arg_names)
+        end
         if exp.attribute_writer?
           klass = case current_context
                   when Context::GhostContext

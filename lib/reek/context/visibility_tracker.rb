@@ -3,7 +3,6 @@ require 'private_attr/everywhere'
 module Reek
   module Context
     # Responsible for tracking visibilities in regards to CodeContexts.
-    # :reek:Attribute
     class VisibilityTracker
       private_attr_accessor :tracked_visibility
 

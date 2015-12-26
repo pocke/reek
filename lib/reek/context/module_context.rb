@@ -72,8 +72,23 @@ module Reek
                                             names: names
       end
 
+      # FIXME: Move to VisibilityTracker
+      VISIBILITY_MAP = { :public_class_method => :public, :private_class_method => :private }
+
+      def track_singleton_visibility(visibility, names)
+        return if names.empty?
+        visibility = VISIBILITY_MAP[visibility]
+        visibility_tracker.track_visibility children: singleton_method_children,
+                                            visibility: visibility,
+                                            names: names
+      end
+
       def instance_method_children
         children.select(&:instance_method?)
+      end
+
+      def singleton_method_children
+        children.select(&:singleton_method?)
       end
     end
   end
