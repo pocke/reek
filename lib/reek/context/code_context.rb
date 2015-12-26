@@ -65,6 +65,7 @@ module Reek
         @statement_counter  = StatementCounter.new
         @refs               = AST::ObjectRefs.new
         @visibility         = :public
+        context.append_child_context(self) if context
       end
 
       # Iterate over each AST node (see `Reek::AST::Node`) of a given type for the current expression.
@@ -93,14 +94,6 @@ module Reek
       end
 
       alias_method :parent, :context
-
-      # Register a child context. The child's parent context should be equal to
-      # the current context.
-      #
-      # @param child [CodeContext] the child context to register
-      def append_child_context(child)
-        children << child
-      end
 
       # :reek:TooManyStatements: { max_statements: 6 }
       # :reek:FeatureEnvy
@@ -141,6 +134,15 @@ module Reek
 
       def number_of_statements
         statement_counter.value
+      end
+
+      protected
+
+      # Register a child context. Used by a child context to register itself with its parent.
+      #
+      # @param child [CodeContext] the child context to register
+      def append_child_context(child)
+        children << child
       end
 
       private

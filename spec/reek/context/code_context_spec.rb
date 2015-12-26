@@ -45,11 +45,10 @@ RSpec.describe Reek::Context::CodeContext do
     context 'when there is an outer' do
       let(:ctx)        { Reek::Context::CodeContext.new(outer, exp) }
       let(:outer_name) { 'another_random sting' }
-      let(:outer)      { double('outer') }
+      let(:outer)      { Reek::Context::CodeContext.new(nil, double('exp1')) }
 
       before :each do
         allow(outer).to receive(:full_name).at_least(:once).and_return(outer_name)
-        allow(outer).to receive(:config).and_return({})
       end
 
       it 'creates the correct full name' do
@@ -184,7 +183,7 @@ RSpec.describe Reek::Context::CodeContext do
     end
 
     context 'when there is an outer context' do
-      let(:outer) { double('outer') }
+      let(:outer) { Reek::Context::CodeContext.new(nil, double('exp1')) }
 
       before :each do
         allow(outer).to receive(:config_for).with(sniffer).and_return(
@@ -198,26 +197,22 @@ RSpec.describe Reek::Context::CodeContext do
     end
   end
 
-  describe '#append_child_context' do
+  describe '#initialize' do
     let(:context) { Reek::Context::CodeContext.new(nil, double('exp1')) }
     let(:first_child) { Reek::Context::CodeContext.new(context, double('exp2')) }
     let(:second_child) { Reek::Context::CodeContext.new(context, double('exp3')) }
 
-    it 'appends the child to the list of children' do
-      context.append_child_context first_child
-      context.append_child_context second_child
+    it "appends the element to the parent context's list of children" do
       expect(context.children).to eq [first_child, second_child]
     end
   end
 
   describe '#each' do
     let(:context) { Reek::Context::CodeContext.new(nil, double('exp1')) }
-    let(:first_child) { Reek::Context::CodeContext.new(context, double('exp2')) }
-    let(:second_child) { Reek::Context::CodeContext.new(context, double('exp3')) }
+    let!(:first_child) { Reek::Context::CodeContext.new(context, double('exp2')) }
+    let!(:second_child) { Reek::Context::CodeContext.new(context, double('exp3')) }
 
     it 'yields each child' do
-      context.append_child_context first_child
-      context.append_child_context second_child
       result = []
       context.each do |ctx|
         result << ctx
