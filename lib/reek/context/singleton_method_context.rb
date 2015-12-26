@@ -10,6 +10,10 @@ module Reek
         true
       end
 
+      def instance_method?
+        false
+      end
+
       def module_function?
         false
       end

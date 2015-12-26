@@ -67,9 +67,13 @@ module Reek
       end
 
       def track_visibility(visibility, names)
-        visibility_tracker.track_visibility children: children,
+        visibility_tracker.track_visibility children: instance_method_children,
                                             visibility: visibility,
                                             names: names
+      end
+
+      def instance_method_children
+        children.select(&:instance_method?)
       end
     end
   end

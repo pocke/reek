@@ -15,6 +15,10 @@ module Reek
         send_expression.full_comment || ''
       end
 
+      def instance_method?
+        true
+      end
+
       private_attr_reader :send_expression
     end
   end

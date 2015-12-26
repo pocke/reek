@@ -38,6 +38,10 @@ module Reek
         false
       end
 
+      def instance_method?
+        true
+      end
+
       def module_function?
         visibility == :module_function
       end
