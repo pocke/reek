@@ -73,7 +73,7 @@ module Reek
       end
 
       # FIXME: Move to VisibilityTracker
-      VISIBILITY_MAP = { :public_class_method => :public, :private_class_method => :private }
+      VISIBILITY_MAP = { public_class_method: :public, private_class_method: :private }
 
       def track_singleton_visibility(visibility, names)
         return if names.empty?
