@@ -39,6 +39,12 @@ module Reek
         return unless INSTANCE_METHOD_NODE_TYPES.include? child.type
         child.visibility = tracked_visibility
       end
+
+      VISIBILITY_MAP = { public_class_method: :public, private_class_method: :private }
+
+      def map_singleton_visibility(visibility)
+        VISIBILITY_MAP[visibility]
+      end
     end
   end
 end

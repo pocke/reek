@@ -482,7 +482,8 @@ module Reek
         current_context.track_visibility(method_name, exp.arg_names)
       elsif exp.class_visibility_modifier?
         current_context.track_singleton_visibility(method_name, exp.arg_names)
-      elsif exp.attribute_writer?
+      end
+      if exp.attribute_writer?
         register_attributes(exp)
       end
     end
