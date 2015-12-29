@@ -160,12 +160,7 @@ module Reek
         elsif exp.class_visibility_modifier?
           current_context.track_singleton_visibility(exp.method_name, exp.arg_names)
         elsif exp.attribute_writer?
-          klass = case current_context
-                  when Context::GhostContext
-                    Context::SingletonAttributeContext
-                  else
-                    Context::AttributeContext
-                  end
+          klass = current_context.attribute_context_class
           exp.args.each do |arg|
             append_new_context(klass, arg, exp)
           end

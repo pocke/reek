@@ -1,4 +1,5 @@
 require_relative 'code_context'
+require_relative 'attribute_context'
 require_relative 'method_context'
 require_relative 'visibility_tracker'
 require_relative '../ast/sexp_formatter'
@@ -35,6 +36,12 @@ module Reek
       # instance methods.
       def method_context_class
         MethodContext
+      end
+
+      # Return the correct class for child attribute contexts. For
+      # ModuleContext, this is the class that represents instance attributes.
+      def attribute_context_class
+        AttributeContext
       end
 
       def defined_instance_methods(visibility: :public)

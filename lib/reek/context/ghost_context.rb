@@ -31,6 +31,12 @@ module Reek
         SingletonMethodContext
       end
 
+      # Return the correct class for child attribute contexts. For
+      # GhostContext, this is the class that represents singleton attributes.
+      def attribute_context_class
+        SingletonAttributeContext
+      end
+
       def track_visibility(visibility, names)
         visibility_tracker.track_visibility children: children,
                                             visibility: visibility,
