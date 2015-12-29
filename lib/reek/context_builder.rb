@@ -483,16 +483,20 @@ module Reek
       elsif exp.class_visibility_modifier?
         current_context.track_singleton_visibility(method_name, exp.arg_names)
       elsif exp.attribute_writer?
-        klass = current_context.attribute_context_class
-        exp.args.each do |arg|
-          append_new_context(klass, arg, exp)
-        end
+        register_attributes(exp)
       end
     end
 
     def handle_send_for_methods(exp)
       append_new_context(Context::SendContext, exp, exp.method_name)
       current_context.record_call_to(exp)
+    end
+
+    def register_attributes(exp)
+      klass = current_context.attribute_context_class
+      exp.args.each do |arg|
+        append_new_context(klass, arg, exp)
+      end
     end
   end
 end
