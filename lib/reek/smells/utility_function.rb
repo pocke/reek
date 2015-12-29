@@ -58,17 +58,21 @@ module Reek
       # :reek:FeatureEnvy
       # :reek:TooManyStatements: { max_statements: 6 }
       def inspect(ctx)
-        return [] if ctx.singleton_method? || ctx.module_function?
-        return [] if ctx.number_of_statements == 0
-        return [] if ctx.references_self?
-        return [] if num_helper_methods(ctx).zero?
-        return [] if ignore_method?(ctx)
+        return [] unless smelly? ctx
 
         [smell_warning(
           context: ctx,
           lines: [ctx.exp.line],
           message: "doesn't depend on instance state (maybe move it to another class?)",
           parameters: { name: ctx.full_name })]
+      end
+
+      def smelly?(ctx)
+        return false if ctx.singleton_method? || ctx.module_function?
+        return false if ctx.references_self?
+        return false if num_helper_methods(ctx).zero?
+        return false if ignore_method?(ctx)
+        true
       end
 
       private
