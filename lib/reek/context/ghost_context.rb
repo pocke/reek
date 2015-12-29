@@ -47,6 +47,9 @@ module Reek
                                             names: names
       end
 
+      def track_singleton_visibility(_visibility, _names)
+      end
+
       def record_use_of_self
         @context.record_use_of_self
       end

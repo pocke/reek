@@ -478,11 +478,8 @@ module Reek
 
     def handle_send_for_modules(exp)
       method_name = exp.method_name
-      if exp.visibility_modifier?
-        current_context.track_visibility(method_name, exp.arg_names)
-      elsif exp.class_visibility_modifier?
-        current_context.track_singleton_visibility(method_name, exp.arg_names)
-      end
+      current_context.track_visibility(method_name, exp.arg_names)
+      current_context.track_singleton_visibility(method_name, exp.arg_names)
       if exp.attribute_writer?
         register_attributes(exp)
       end

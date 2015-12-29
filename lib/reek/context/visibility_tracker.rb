@@ -7,6 +7,8 @@ module Reek
       private_attr_accessor :tracked_visibility
 
       INSTANCE_METHOD_NODE_TYPES = [:sym, :def]
+      VISIBILITY_MODIFIERS = [:private, :public, :protected, :module_function]
+      VISIBILITY_MAP = { public_class_method: :public, private_class_method: :private }
 
       def initialize
         @tracked_visibility = :public
@@ -22,6 +24,7 @@ module Reek
       # @param names [Array<Symbol>]
       #
       def track_visibility(children: raise, visibility: raise, names: raise)
+        return unless VISIBILITY_MODIFIERS.include? visibility
         if names.any?
           children.each do |child|
             child.visibility = visibility if names.include?(child.name)
@@ -39,8 +42,6 @@ module Reek
         return unless INSTANCE_METHOD_NODE_TYPES.include? child.type
         child.visibility = tracked_visibility
       end
-
-      VISIBILITY_MAP = { public_class_method: :public, private_class_method: :private }
 
       def map_singleton_visibility(visibility)
         VISIBILITY_MAP[visibility]
