@@ -44,6 +44,10 @@ module Reek
         AttributeContext
       end
 
+      def module_context?
+        true
+      end
+
       def defined_instance_methods(visibility: :public)
         each.select do |context|
           context.is_a?(Context::MethodContext) &&

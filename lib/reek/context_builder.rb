@@ -148,26 +148,11 @@ module Reek
     # we also record to what the method call is referring to
     # which we later use for smell detectors like FeatureEnvy.
     #
-    # :reek:TooManyStatements: { max_statements: 7 }
-    # :reek:FeatureEnvy
     def process_send(exp)
-      method_name = exp.method_name
-      # FIXME: Provide generic hook method instead of type checking.
-      case current_context
-      when Context::ModuleContext, Context::GhostContext
-        if exp.visibility_modifier?
-          current_context.track_visibility(method_name, exp.arg_names)
-        elsif exp.class_visibility_modifier?
-          current_context.track_singleton_visibility(exp.method_name, exp.arg_names)
-        elsif exp.attribute_writer?
-          klass = current_context.attribute_context_class
-          exp.args.each do |arg|
-            append_new_context(klass, arg, exp)
-          end
-        end
-      when Context::MethodContext
-        append_new_context(Context::SendContext, exp, method_name)
-        current_context.record_call_to(exp)
+      if current_context.module_context?
+        handle_send_for_modules exp
+      elsif current_context.method_context?
+        handle_send_for_methods exp
       end
       process(exp)
     end
@@ -489,6 +474,25 @@ module Reek
     #
     def append_new_context(klass, *args)
       klass.new(current_context, *args)
+    end
+
+    def handle_send_for_modules(exp)
+      method_name = exp.method_name
+      if exp.visibility_modifier?
+        current_context.track_visibility(method_name, exp.arg_names)
+      elsif exp.class_visibility_modifier?
+        current_context.track_singleton_visibility(method_name, exp.arg_names)
+      elsif exp.attribute_writer?
+        klass = current_context.attribute_context_class
+        exp.args.each do |arg|
+          append_new_context(klass, arg, exp)
+        end
+      end
+    end
+
+    def handle_send_for_methods(exp)
+      append_new_context(Context::SendContext, exp, exp.method_name)
+      current_context.record_call_to(exp)
     end
   end
 end

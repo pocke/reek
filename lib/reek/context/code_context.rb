@@ -147,6 +147,14 @@ module Reek
         statement_counter.value
       end
 
+      def module_context?
+        false
+      end
+
+      def method_context?
+        false
+      end
+
       private
 
       def configuration_via_code_commment

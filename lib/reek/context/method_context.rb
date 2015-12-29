@@ -8,6 +8,10 @@ module Reek
     class MethodContext < CodeContext
       attr_reader :refs
 
+      def method_context?
+        true
+      end
+
       def references_self?
         exp.depends_on_instance?
       end
