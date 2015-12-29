@@ -117,14 +117,7 @@ module Reek
     # Given the above example we would count 2 statements overall.
     #
     def process_def(exp)
-      # FIXME: Do not use type checking
-      klass = case current_context
-              when Context::GhostContext
-                Context::SingletonMethodContext
-              else
-                Context::MethodContext
-              end
-      inside_new_context(klass, exp) do
+      inside_new_context(current_context.method_context_class, exp) do
         increase_statement_count_by(exp.body)
         process(exp)
       end

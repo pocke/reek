@@ -30,6 +30,13 @@ module Reek
         super
       end
 
+      # Return the correct class for child method contexts (representing nodes
+      # of type `:def`). For ModuleContext, this is the class that represents
+      # instance methods.
+      def method_context_class
+        MethodContext
+      end
+
       def defined_instance_methods(visibility: :public)
         each.select do |context|
           context.is_a?(Context::MethodContext) &&

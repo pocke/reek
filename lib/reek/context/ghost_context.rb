@@ -1,4 +1,5 @@
 require_relative 'code_context'
+require_relative 'singleton_method_context'
 
 module Reek
   module Context
@@ -21,6 +22,13 @@ module Reek
         real_parent = @context.append_child_context(child)
         visibility_tracker.set_child_visibility(child)
         real_parent
+      end
+
+      # Return the correct class for child method contexts (representing nodes
+      # of type `:def`). For GhostContext, this is the class that represents
+      # singleton methods.
+      def method_context_class
+        SingletonMethodContext
       end
 
       def track_visibility(visibility, names)
