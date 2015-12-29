@@ -91,12 +91,9 @@ module Reek
       end
 
       def track_singleton_visibility(visibility, names)
-        return if names.empty?
-        visibility = visibility_tracker.map_singleton_visibility(visibility)
-        return unless visibility
-        visibility_tracker.track_visibility children: singleton_method_children,
-                                            visibility: visibility,
-                                            names: names
+        visibility_tracker.track_singleton_visibility children: singleton_method_children,
+                                                      visibility: visibility,
+                                                      names: names
       end
 
       def instance_method_children
@@ -105,14 +102,6 @@ module Reek
 
       def singleton_method_children
         children.select(&:singleton_method?)
-      end
-
-      def singleton_method?
-        false
-      end
-
-      def instance_method?
-        false
       end
     end
   end

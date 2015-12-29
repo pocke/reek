@@ -18,7 +18,7 @@ module Reek
   # counting. Ideally `ContextBuilder` would only build up the context tree and leave the
   # statement and reference counting to the contexts.
   #
-  # :reek:TooManyMethods: { max_methods: 27 }
+  # :reek:TooManyMethods: { max_methods: 30 }
   # :reek:UnusedPrivateMethod: { exclude: [ !ruby/regexp /process_/ ] }
   class ContextBuilder
     attr_reader :context_tree
@@ -478,11 +478,10 @@ module Reek
 
     def handle_send_for_modules(exp)
       method_name = exp.method_name
-      current_context.track_visibility(method_name, exp.arg_names)
-      current_context.track_singleton_visibility(method_name, exp.arg_names)
-      if exp.attribute_writer?
-        register_attributes(exp)
-      end
+      arg_names = exp.arg_names
+      current_context.track_visibility(method_name, arg_names)
+      current_context.track_singleton_visibility(method_name, arg_names)
+      register_attributes(exp) if exp.attribute_writer?
     end
 
     def handle_send_for_methods(exp)

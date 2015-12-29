@@ -155,6 +155,14 @@ module Reek
         false
       end
 
+      def singleton_method?
+        false
+      end
+
+      def instance_method?
+        false
+      end
+
       private
 
       def configuration_via_code_commment
