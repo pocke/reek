@@ -46,6 +46,11 @@ module Reek
         true
       end
 
+      # Was this method defined with an instance method-like syntax?
+      def defined_as_instance_method?
+        true
+      end
+
       def module_function?
         visibility == :module_function
       end

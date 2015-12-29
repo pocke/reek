@@ -163,6 +163,15 @@ module Reek
         false
       end
 
+      def defined_as_instance_method?
+        false
+      end
+
+      def apply_current_visibility(current_visibility)
+        return unless defined_as_instance_method?
+        self.visibility = current_visibility
+      end
+
       private
 
       def configuration_via_code_commment

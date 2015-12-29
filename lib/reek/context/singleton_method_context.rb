@@ -17,6 +17,11 @@ module Reek
       def module_function?
         false
       end
+
+      # Was this method defined with an instance method-like syntax?
+      def defined_as_instance_method?
+        type == :def
+      end
     end
   end
 end
