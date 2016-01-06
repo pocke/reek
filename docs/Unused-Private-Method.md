@@ -45,3 +45,14 @@ class ContextBuilder
 end
 ```
 
+Note that disabling this detector via comment works on a `class` scope, not
+a method scope (like you can see above).
+
+## Known limitations
+
+* Method calls via dynamic dispatch (e.g. via `send`) is something `Reek` (or any other
+  static tool for that matter) can not detect. You should whitelist those methods.
+* `Reek` works on a per-file base. This means that using something like the [template pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+  will trigger this detector by mistake. Right now you have to whitelist the
+  methods in question as well unfortunately.
+
